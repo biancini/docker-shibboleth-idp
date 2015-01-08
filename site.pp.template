@@ -1,4 +1,4 @@
-node '{{ vals['idpfqdn'] }}' {
+node default {
 
   idpfirewall::firewall { "{{ vals[''] }}{hostname}-firewall":
     iptables_enable_network => undef,
