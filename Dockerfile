@@ -9,20 +9,25 @@ RUN apt-get update
 RUN apt-get install -y wget ruby augeas-tools python-jinja2 git
 RUN wget -q https://apt.puppetlabs.com/puppetlabs-release-trusty.deb -O /tmp/puppetlabs.deb
 RUN dpkg -i /tmp/puppetlabs.deb
-RUN apt-get -y install puppet 
+RUN apt-get -y install puppet puppetmaster
 #ADD puppet.conf /etc/puppet/puppet.conf
 
 # Download IdP in the cloud puppet code
 WORKDIR /opt
-RUN git clone https://github.com/ConsortiumGARR/Puppet-GARRShibbolethIdP.git /opt/Puppet-GARRShibbolethIdP
+#RUN git clone https://github.com/ConsortiumGARR/Puppet-GARRShibbolethIdP.git /opt/Puppet-GARRShibbolethIdP
+RUN git clone https://github.com/biancini/Puppet-GARRShibbolethIdP.git /opt/Puppet-GARRShibbolethIdP
 
 WORKDIR /opt/Puppet-GARRShibbolethIdP
+RUN git submodule init
+RUN git submodule update
+WORKDIR /opt/Puppet-GARRShibbolethIdP/garr-common
 RUN git submodule init
 RUN git submodule update
 
 WORKDIR /etc/puppet/modules
 RUN for i in /opt/Puppet-GARRShibbolethIdP/puppetlabs/*; do ln -s $i; done
 RUN for i in /opt/Puppet-GARRShibbolethIdP/garr-common/garr/*; do ln -s $i; done
+RUN for i in /opt/Puppet-GARRShibbolethIdP/garr-common/puppetlabs/*; do ln -s $i; done
 RUN for i in /opt/Puppet-GARRShibbolethIdP/garr/*; do ln -s $i; done
 #RUN touch /etc/puppet/manifests/site.pp
 #RUN mkdir /etc/puppet/manifests/nodes
